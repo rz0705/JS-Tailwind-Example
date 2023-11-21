@@ -1,0 +1,58 @@
+@keyframes shake {
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25%,
+    75% {
+        transform: translateX(-5px);
+    }
+
+    50% {
+        transform: translateX(5px);
+    }
+}
+
+.shake {
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes zoom {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.zoom {
+    animation: zoom 0.5s ease-in-out;
+}
+
+.swal2-popup {
+    width: 300px;
+    font-size: 14px;
+}
+
+.swal2-title {
+    font-size: 18px;
+}
+
+.swal2-content {
+    font-size: 16px;
+}
+
+#btn {
+    transition: background-color 0.3s ease-in-out;
+}
+
+#btn:hover {
+    background-color: #4FD1C5;
+}
