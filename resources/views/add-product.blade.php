@@ -73,7 +73,7 @@
                         <label for="item-weight"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Item Weight
                             (kg)</label>
-                        <input type="number" name="item-weight" id="item-weight" value="{{ old('number') }}"
+                        <input type="number" name="item-weight" id="item-weight" value="{{ old('number') }}" step="0.01"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                             placeholder="12" oninput="validateNumericInput(this)">
                     </div>
@@ -120,7 +120,7 @@
             var isBrandValid = brand !== '';
             var isPriceValid = !isNaN(price) && price >= 0.01;
             var isCategoryValid = category !== '' && category !== "Select Category";
-            var isItemWeightValid = !isNaN(itemWeight) && itemWeight > 0;
+            var isItemWeightValid = !isNaN(itemWeight) && itemWeight >= 0.01;
             var isDescriptionValid = description !== '';
             // console.log(price);
             // console.log(itemWeight);
@@ -159,7 +159,7 @@
             var isBrandValid = brand !== '';
             var isPriceValid = !isNaN(price) && price > 0.01;
             var isCategoryValid = category !== "Select Category";
-            var isItemWeightValid = !isNaN(itemWeight) && itemWeight > 0;
+            var isItemWeightValid = !isNaN(itemWeight) && itemWeight > 0.01;
             var isDescriptionValid = description !== '';
 
             var isPriceAndItemWeightValid = isPriceValid && isItemWeightValid;

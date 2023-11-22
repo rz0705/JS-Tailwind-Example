@@ -46,8 +46,6 @@ class AddProductController extends Controller
             'product_description' => $request->input('description'),
         ]);
 
-
-
         // Display SweetAlert
         $this->showSuccessAlert();
 
