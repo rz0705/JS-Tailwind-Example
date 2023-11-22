@@ -10,6 +10,7 @@ class AddProductController extends Controller
 {
     public function store(Request $request)
     {        
+        // dd('hi');
         // Server-side validation
         // $request->validate([
         //     'name' => 'required|string',
@@ -23,9 +24,9 @@ class AddProductController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
             'brand' => 'required|string',
-            'price' => 'required|integer',
+            'price' => 'required|decimal:0,4|min:0.01',
             'category' => 'required|string',
-            'item-weight' => 'required|integer',
+            'item-weight' => 'required|decimal:0,4|min:0.01',
             'description' => 'required|string',
         ]);
 

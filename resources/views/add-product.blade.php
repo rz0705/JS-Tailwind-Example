@@ -15,6 +15,16 @@
 </head>
 
 <body>
+
+    @if ($errors->any())
+        <div class="error text-red-500">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
     <section class="bg-white dark:bg-gray-900">
         <div class="py-8 px-4 mx-auto max-w-2xl lg:py-16">
             <h2 class="mb-4 mt-3 text-xl font-bold text-gray-900 dark:text-white">Add a new product</h2>
@@ -25,8 +35,11 @@
                         <label for="name"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Product Name</label>
                         <input type="text" name="name" id="name" value="{{ old('name') }}"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                            class="@error('title') is-invalid @enderror bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                             placeholder="Type product name">
+                            @error('name')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
                     </div>
                     <div class="w-full">
                         <label for="brand"
@@ -38,7 +51,7 @@
                     <div class="w-full">
                         <label for="price"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Price</label>
-                        <input type="text" name="price" id="price" value="{{ old('price') }}" step="0.01"
+                        <input type="number" name="price" id="price" value="{{ old('price') }}" step="0.01"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                             placeholder="$2999" oninput="validateNumericInput(this)">
                     </div>
@@ -60,7 +73,7 @@
                         <label for="item-weight"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Item Weight
                             (kg)</label>
-                        <input type="text" name="item-weight" id="item-weight" value="{{ old('number') }}"
+                        <input type="number" name="item-weight" id="item-weight" value="{{ old('number') }}"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                             placeholder="12" oninput="validateNumericInput(this)">
                     </div>
@@ -79,6 +92,7 @@
             </form>
         </div>
     </section>
+    
 </body>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -104,7 +118,7 @@
             // Validation checks
             var isNameValid = name !== '';
             var isBrandValid = brand !== '';
-            var isPriceValid = !isNaN(price) && price >= 0;
+            var isPriceValid = !isNaN(price) && price >= 0.01;
             var isCategoryValid = category !== '' && category !== "Select Category";
             var isItemWeightValid = !isNaN(itemWeight) && itemWeight > 0;
             var isDescriptionValid = description !== '';
@@ -138,16 +152,17 @@
             var itemWeight = parseFloat(document.getElementById("item-weight").value);
             var description = document.getElementById("description").value;
 
+            // console.log(typeof(price));
+            // exit;
             // Validation checks
             var isNameValid = name !== '';
             var isBrandValid = brand !== '';
-            var isPriceValid = !isNaN(price) && price > 0;
+            var isPriceValid = !isNaN(price) && price > 0.01;
             var isCategoryValid = category !== "Select Category";
             var isItemWeightValid = !isNaN(itemWeight) && itemWeight > 0;
             var isDescriptionValid = description !== '';
 
             var isPriceAndItemWeightValid = isPriceValid && isItemWeightValid;
-
             var isValid = isNameValid && isBrandValid && isPriceValid && isCategoryValid &&
                 isItemWeightValid && isDescriptionValid && isPriceAndItemWeightValid;
 
@@ -196,14 +211,14 @@
     let sanitizedValue = input.value.replace(/[^0-9.]/g, '');
 
     // Check if the last character is a dot
-    if (sanitizedValue.endsWith('.')) {
-        // Move the cursor to the end
-        sanitizedValue = sanitizedValue.slice(0, -1);
-        input.value = sanitizedValue;
-        input.setSelectionRange(sanitizedValue.length, sanitizedValue.length);
-    } else {
-        input.value = sanitizedValue;
-    }
+    // if (sanitizedValue.endsWith('.')) {
+    //     // Move the cursor to the end
+    //     sanitizedValue = sanitizedValue.slice(0, -1);
+    //     input.value = sanitizedValue;
+    //     input.setSelectionRange(sanitizedValue.length, sanitizedValue.length);
+    // } else {
+    //     input.value = sanitizedValue;
+    // }
 }
 </script>
 
