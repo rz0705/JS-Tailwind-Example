@@ -35,11 +35,10 @@
                         <label for="name"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Product Name</label>
                         <input type="text" name="name" id="name" value="{{ old('name') }}"
-                            class="@error('title') is-invalid @enderror bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                             placeholder="Type product name">
-                            @error('name')
-                                <div class="alert alert-danger">{{ $message }}</div>
-                            @enderror
+                            <h2>{{ __('validation.required', ['attribute' => 'Name']) }}</h2>
+                           
                     </div>
                     <div class="w-full">
                         <label for="brand"
@@ -47,6 +46,9 @@
                         <input type="text" name="brand" id="brand" value="{{ old('brand') }}"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                             placeholder="Product brand">
+                            @error('brand')
+                            <div class="mt-2 mb-4 text-red-500">{{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="w-full">
                         <label for="price"
@@ -54,6 +56,7 @@
                         <input type="number" name="price" id="price" value="{{ old('price') }}" step="0.01"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                             placeholder="$2999" oninput="validateNumericInput(this)">
+                        <span id="price-error" class="text-red-500 text-xs mt-1"></span>
                     </div>
                     <div>
                         <label for="category"
@@ -68,14 +71,16 @@
                             </option>
                             <option value="PH" {{ old('category') == 'PH' ? 'selected' : '' }}>Phones</option>
                         </select>
+                        <span id="category-error" class="text-red-500 text-xs mt-1"></span>
                     </div>
                     <div>
                         <label for="item-weight"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Item Weight
-                            (kg)</label>
-                        <input type="number" name="item-weight" id="item-weight" value="{{ old('number') }}" step="0.01"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Item Weight (kg)</label>
+                        <input type="number" name="item-weight" id="item-weight" value="{{ old('item-weight') }}"
+                            step="0.01"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                             placeholder="12" oninput="validateNumericInput(this)">
+                        <span id="weight-error" class="text-red-500 text-xs mt-1"></span>
                     </div>
                     <div class="sm:col-span-2">
                         <label for="description"
@@ -83,6 +88,7 @@
                         <textarea rows="4" name="description" id="description"
                             class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                             placeholder="Your description here">{{ old('description') }}</textarea>
+                        <span id="description-error" class="text-red-500 text-xs mt-1"></span>
                         <button id= "btn" type="button"
                             class="bg-neutral-400 hover:bg-sky-700 px-5 py-2 ml-60 mt-6 text-sm leading-5 rounded-full font-semibold text-white">
                             Add Product
@@ -92,7 +98,6 @@
             </form>
         </div>
     </section>
-    
 </body>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -133,6 +138,12 @@
             setBorderColorIfEmpty(itemWeightField, isItemWeightValid);
             setBorderColorIfEmpty(descriptionField, isDescriptionValid);
 
+            // setValidationStatus(nameField, isNameValid, "Please enter a valid name.");
+            // setValidationStatus(brandField, isBrandValid, "Please enter a valid brand.");
+            // setValidationStatus(priceField, isPriceValid, "Please enter a valid price.");
+            // setValidationStatus(categoryField, isCategoryValid, "Please select a category.");
+            // setValidationStatus(itemWeightField, isItemWeightValid, "Please enter a valid item weight.");
+            // setValidationStatus(descriptionField, isDescriptionValid, "Please enter a valid description.");
 
             var isPriceAndItemWeightValid = isPriceValid && isItemWeightValid;
             var isValid = isNameValid && isBrandValid && isPriceValid && isCategoryValid &&
@@ -174,12 +185,10 @@
                 addProductButton.style.backgroundColor = "green";
                 addProductButton.classList.remove("shake");
                 addProductButton.classList.add("zoom");
-                addProductButton.style.cursor = 'auto';
             } else {
                 addProductButton.style.backgroundColor = "red";
                 addProductButton.classList.remove("zoom");
                 addProductButton.classList.add("shake");
-                addProductButton.style.cursor = 'not-allowed';
             }
         });
 
@@ -207,19 +216,19 @@
     @endif
 
     function validateNumericInput(input) {
-    // Remove non-numeric characters
-    let sanitizedValue = input.value.replace(/[^0-9.]/g, '');
+        // Remove non-numeric characters
+        let sanitizedValue = input.value.replace(/[^0-9.]/g, '');
 
-    // Check if the last character is a dot
-    // if (sanitizedValue.endsWith('.')) {
-    //     // Move the cursor to the end
-    //     sanitizedValue = sanitizedValue.slice(0, -1);
-    //     input.value = sanitizedValue;
-    //     input.setSelectionRange(sanitizedValue.length, sanitizedValue.length);
-    // } else {
-    //     input.value = sanitizedValue;
-    // }
-}
+        // Check if the last character is a dot
+        if (sanitizedValue.endsWith('.')) {
+            // Move the cursor to the end
+            sanitizedValue = sanitizedValue.slice(0, -1);
+            input.value = sanitizedValue;
+            input.setSelectionRange(sanitizedValue.length, sanitizedValue.length);
+        } else {
+            input.value = sanitizedValue;
+        }
+    }
 </script>
 
 </html>

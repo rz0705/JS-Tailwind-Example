@@ -10,7 +10,6 @@ class AddProductController extends Controller
 {
     public function store(Request $request)
     {        
-        // dd('hi');
         // Server-side validation
         // $request->validate([
         //     'name' => 'required|string',
@@ -21,20 +20,20 @@ class AddProductController extends Controller
         //     'description' => 'required|string',
         // ]);
 
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string',
-            'brand' => 'required|string',
-            'price' => 'required|decimal:0,4|min:0.01',
-            'category' => 'required|string',
-            'item-weight' => 'required|decimal:0,4|min:0.01',
-            'description' => 'required|string',
-        ]);
+        // $validator = Validator::make($request->all(), [
+        //     'name' => 'required|string',
+        //     'brand' => 'required|string',
+        //     'price' => 'required|decimal:0,4|min:0.01',
+        //     'category' => 'required|string',
+        //     'item-weight' => 'required|decimal:0,4|min:0.01',
+        //     'description' => 'required|string',
+        // ]);
 
-        if ($validator->fails()) {
-            return redirect('add-product')
-                ->withErrors($validator)
-                ->withInput();
-        }
+        // if ($validator->fails()) {
+        //     return redirect('add-product')
+        //         ->withErrors($validator)
+        //         ->withInput();
+        // }
 
         // Insert the record into the database using the model
         AddProduct::create([
