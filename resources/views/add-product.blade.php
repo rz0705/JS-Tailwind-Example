@@ -38,9 +38,9 @@
                     <div class="w-full">
                         <label for="price"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Price</label>
-                        <input type="number" name="price" id="price" value="{{ old('price') }}"
+                        <input type="text" name="price" id="price" value="{{ old('price') }}" step="0.01"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                            placeholder="$2999">
+                            placeholder="$2999" oninput="validateNumericInput(this)">
                     </div>
                     <div>
                         <label for="category"
@@ -60,9 +60,9 @@
                         <label for="item-weight"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Item Weight
                             (kg)</label>
-                        <input type="number" name="item-weight" id="item-weight" value="{{ old('number') }}"
+                        <input type="text" name="item-weight" id="item-weight" value="{{ old('number') }}"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                            placeholder="12">
+                            placeholder="12" oninput="validateNumericInput(this)">
                     </div>
                     <div class="sm:col-span-2">
                         <label for="description"
@@ -105,56 +105,29 @@
             var isNameValid = name !== '';
             var isBrandValid = brand !== '';
             var isPriceValid = !isNaN(price) && price >= 0;
-            var isCategoryValid = category !== "Select category";
+            var isCategoryValid = category !== '' && category !== "Select Category";
             var isItemWeightValid = !isNaN(itemWeight) && itemWeight > 0;
             var isDescriptionValid = description !== '';
             // console.log(price);
             // console.log(itemWeight);
+
+            // Apply border color based on validation
+            setBorderColorIfEmpty(nameField, isNameValid);
+            setBorderColorIfEmpty(brandField, isBrandValid);
+            setBorderColorIfEmpty(priceField, isPriceValid);
+            setBorderColorIfEmpty(categoryField, isCategoryValid);
+            setBorderColorIfEmpty(itemWeightField, isItemWeightValid);
+            setBorderColorIfEmpty(descriptionField, isDescriptionValid);
+
+
             var isPriceAndItemWeightValid = isPriceValid && isItemWeightValid;
             var isValid = isNameValid && isBrandValid && isPriceValid && isCategoryValid &&
                 isItemWeightValid && isDescriptionValid && isPriceAndItemWeightValid;
 
-            // console.log('isValid:', isValid);
-            // exit;
-
-            //swal
-            // if (isValid) {
-            //     // console.log("true");
-            //     // exit;
-            //     // field.style.borderColor = 'green';
-            //     Swal.fire({
-            //         icon: 'success',
-            //         title: 'Product Added!',
-            //         text: 'The product has been successfully added.',
-            //         customClass: {
-            //             popup: 'small-sweetalert'
-            //         }
-            //     });
-            //     // Reset border colors after successful submission
-            //     resetBorderColor([nameField, brandField, priceField, categoryField, itemWeightField, descriptionField]);
-            // } else {
-
-            //     Swal.fire({
-            //         icon: 'error',
-            //         title: 'Validation Error',
-            //         text: 'Please fill in all required fields correctly.',
-            //         customClass: {
-            //             popup: 'small-sweetalert'
-            //         }
-            //     });
-
-            //     // Set red border color for blank fields
-            //     setBorderColorIfEmpty(nameField, isNameValid);
-            //     setBorderColorIfEmpty(brandField, isBrandValid);
-            //     setBorderColorIfEmpty(priceField, isPriceValid);
-            //     setBorderColorIfEmpty(categoryField, isCategoryValid);
-            //     setBorderColorIfEmpty(itemWeightField, isItemWeightValid);
-            //     setBorderColorIfEmpty(descriptionField, isDescriptionValid);
-            // }
-
-            if(isValid){
-            var form = document.getElementById("addproduct");
-            form.submit();}
+            if (isValid) {
+                var form = document.getElementById("addproduct");
+                form.submit();
+            }
         });
 
         addProductButton.addEventListener("mouseover", function() {
@@ -169,7 +142,7 @@
             var isNameValid = name !== '';
             var isBrandValid = brand !== '';
             var isPriceValid = !isNaN(price) && price > 0;
-            var isCategoryValid = category !== "Select category";
+            var isCategoryValid = category !== "Select Category";
             var isItemWeightValid = !isNaN(itemWeight) && itemWeight > 0;
             var isDescriptionValid = description !== '';
 
@@ -202,12 +175,8 @@
         });
 
         function setBorderColorIfEmpty(field, isValid) {
-            // Set the border color of the specified field if it is empty and not valid
-            if (!isValid) {
-                field.style.borderColor = 'red';
-            } else {
-                field.style.borderColor = 'green';
-            }
+            // Set the border color of the specified field based on validity
+            field.style.borderColor = isValid ? 'green' : 'red';
         }
     });
 
@@ -221,6 +190,21 @@
             }
         });
     @endif
+
+    function validateNumericInput(input) {
+    // Remove non-numeric characters
+    let sanitizedValue = input.value.replace(/[^0-9.]/g, '');
+
+    // Check if the last character is a dot
+    if (sanitizedValue.endsWith('.')) {
+        // Move the cursor to the end
+        sanitizedValue = sanitizedValue.slice(0, -1);
+        input.value = sanitizedValue;
+        input.setSelectionRange(sanitizedValue.length, sanitizedValue.length);
+    } else {
+        input.value = sanitizedValue;
+    }
+}
 </script>
 
 </html>
