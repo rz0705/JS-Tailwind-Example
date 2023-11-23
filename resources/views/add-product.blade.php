@@ -32,13 +32,11 @@
                 @csrf
                 <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
                     <div class="sm:col-span-2">
-                        <label for="name"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Product Name</label>
+                        <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Product Name</label>
                         <input type="text" name="name" id="name" value="{{ old('name') }}"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                             placeholder="Type product name">
-                            <h2>{{ __('validation.required', ['attribute' => 'Name']) }}</h2>
-                           
+                        <span id="name-error" class="text-red-500 text-xs mt-1"></span>
                     </div>
                     <div class="w-full">
                         <label for="brand"
@@ -46,17 +44,15 @@
                         <input type="text" name="brand" id="brand" value="{{ old('brand') }}"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                             placeholder="Product brand">
-                            @error('brand')
-                            <div class="mt-2 mb-4 text-red-500">{{ $message }}</div>
-                        @enderror
+                            <span id="brand-error" class="text-red-500 text-xs mt-1"></span>
                     </div>
                     <div class="w-full">
                         <label for="price"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Price</label>
                         <input type="number" name="price" id="price" value="{{ old('price') }}" step="0.01"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                            placeholder="$2999" oninput="validateNumericInput(this)">
-                        <span id="price-error" class="text-red-500 text-xs mt-1"></span>
+                            placeholder="$2999" >
+                            <span id="price-error" class="text-red-500 text-xs mt-1"></span>
                     </div>
                     <div>
                         <label for="category"
@@ -79,8 +75,8 @@
                         <input type="number" name="item-weight" id="item-weight" value="{{ old('item-weight') }}"
                             step="0.01"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                            placeholder="12" oninput="validateNumericInput(this)">
-                        <span id="weight-error" class="text-red-500 text-xs mt-1"></span>
+                            placeholder="12" >
+                            <span id="item-weight-error" class="text-red-500 text-xs mt-1"></span>
                     </div>
                     <div class="sm:col-span-2">
                         <label for="description"
@@ -88,7 +84,7 @@
                         <textarea rows="4" name="description" id="description"
                             class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                             placeholder="Your description here">{{ old('description') }}</textarea>
-                        <span id="description-error" class="text-red-500 text-xs mt-1"></span>
+                        <span id="description-error" class="text-red-500 text-xs mt-1"></span><br>
                         <button id= "btn" type="button"
                             class="bg-neutral-400 hover:bg-sky-700 px-5 py-2 ml-60 mt-6 text-sm leading-5 rounded-full font-semibold text-white">
                             Add Product
@@ -102,9 +98,12 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         var addProductButton = document.getElementById("btn");
+        var formSubmitted = false; // Add this variable
 
         addProductButton.addEventListener("click", function(event) {
             event.preventDefault(); // Prevent form submission for now
+
+            formSubmitted = true;
 
             var nameField = document.getElementById("name");
             var brandField = document.getElementById("brand");
@@ -138,12 +137,13 @@
             setBorderColorIfEmpty(itemWeightField, isItemWeightValid);
             setBorderColorIfEmpty(descriptionField, isDescriptionValid);
 
-            // setValidationStatus(nameField, isNameValid, "Please enter a valid name.");
-            // setValidationStatus(brandField, isBrandValid, "Please enter a valid brand.");
-            // setValidationStatus(priceField, isPriceValid, "Please enter a valid price.");
-            // setValidationStatus(categoryField, isCategoryValid, "Please select a category.");
-            // setValidationStatus(itemWeightField, isItemWeightValid, "Please enter a valid item weight.");
-            // setValidationStatus(descriptionField, isDescriptionValid, "Please enter a valid description.");
+            // Display error messages under each input field
+            displayErrorMessage("name", isNameValid, "Please enter a valid name.");
+            displayErrorMessage("brand", isBrandValid, "Please enter a valid brand.");
+            displayErrorMessage("price", isPriceValid, "Please enter a valid price.");
+            displayErrorMessage("category", isCategoryValid, "Please select a category.");
+            displayErrorMessage("item-weight", isItemWeightValid, "Please enter a valid item weight.");
+            displayErrorMessage("description", isDescriptionValid, "Please enter a valid description.");
 
             var isPriceAndItemWeightValid = isPriceValid && isItemWeightValid;
             var isValid = isNameValid && isBrandValid && isPriceValid && isCategoryValid &&
@@ -154,6 +154,13 @@
                 form.submit();
             }
         });
+
+        function displayErrorMessage(fieldName, isValid, errorMessage) {
+        var errorSpan = document.getElementById(fieldName + "-error");
+
+        // Display the error message only if the form has been submitted
+        errorSpan.textContent = formSubmitted && !isValid ? errorMessage : "";
+    }
 
         addProductButton.addEventListener("mouseover", function() {
             var name = document.getElementById("name").value;
@@ -208,27 +215,28 @@
         Swal.fire({
             icon: 'success',
             title: 'Product Added Successfully!!',
-            text: "{{ Session::has('success') }}",
+            // text: "{{ Session::has('success') }}",
             customClass: {
                 popup: 'small-sweetalert'
             }
         });
     @endif
 
-    function validateNumericInput(input) {
-        // Remove non-numeric characters
-        let sanitizedValue = input.value.replace(/[^0-9.]/g, '');
-
-        // Check if the last character is a dot
-        if (sanitizedValue.endsWith('.')) {
-            // Move the cursor to the end
-            sanitizedValue = sanitizedValue.slice(0, -1);
-            input.value = sanitizedValue;
-            input.setSelectionRange(sanitizedValue.length, sanitizedValue.length);
-        } else {
-            input.value = sanitizedValue;
-        }
-    }
+//     function validateNumericInput(input) {
+//         // Remove non-numeric characters
+//         let sanitizedValue = input.value.replace(/[^0-9.]/g, '');
+// console.log(sanitizedValue);
+// exit;
+//         // Check if the last character is a dot
+//         if (sanitizedValue.endsWith('.')) {
+//             // Move the cursor to the end
+//             sanitizedValue = sanitizedValue.slice(0, -1);
+//             input.value = sanitizedValue;
+//             input.setSelectionRange(sanitizedValue.length, sanitizedValue.length);
+//         } else {
+//             input.value = sanitizedValue;
+//         }
+//     }
 </script>
 
 </html>
