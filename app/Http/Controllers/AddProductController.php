@@ -20,6 +20,8 @@ class AddProductController extends Controller
         //     'description' => 'required|string',
         // ]);
 
+        // back-end validation
+
         // $validator = Validator::make($request->all(), [
         //     'name' => 'required|string',
         //     'brand' => 'required|string',
